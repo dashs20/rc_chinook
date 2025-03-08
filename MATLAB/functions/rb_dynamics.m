@@ -5,21 +5,19 @@ arguments
     state (13,1) double % current state.
     mass (1,1) double % mass (kg)
     I (3,3) double % inertia matrix. Assumed to have no cross terms.
-    F ()
+    F (3,1) double % Force vector (N)
+    tau (3,1) double % Moment vector (Nm)
 end
 
 % --- Unpack states ---
-x   = state(1);
-y   = state(2);
-z   = state(3);
-vx  = state(4);
+vx  = state(4);   % velocity (m/s)
 vy  = state(5);
 vz  = state(6);
 e1  = state(7);   % qx
 e2  = state(8);   % qy
 e3  = state(9);   % qz
 e4  = state(10);  % qw
-wx  = state(11);
+wx  = state(11); % angular velocity (rad/s)
 wy  = state(12);
 wz  = state(13);
 

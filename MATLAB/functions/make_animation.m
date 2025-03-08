@@ -78,7 +78,6 @@ function make_animation(th, r1, r2, xlims, ylims, zlims, filename, scale_factor,
         f1_rotated = (R * -fth(k, 4:6).').';
 
         % Compute body-fixed coordinate frame vectors
-        scale = 0.1; % Adjust axis length
         x_axis = R(:,1)/3'; % Body X-axis (red)
         y_axis = -R(:,2)/3'; % Body Y-axis (green)
         z_axis = -R(:,3)/3'; % Body Z-axis (blue)
