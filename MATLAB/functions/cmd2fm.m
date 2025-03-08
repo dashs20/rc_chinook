@@ -1,4 +1,4 @@
-function [F, M, f] = cmd2fm(a1, a2, f1, f2, r1, r2, max_tilt, max_thrust)
+function [F, M, f, a] = cmd2fm(a1, a2, f1, f2, r1, r2, max_tilt, max_thrust)
 % this function maps commands into forces and moments.
 arguments
     a1 (1,1) double % angle (percent) for servo 1.
@@ -42,4 +42,5 @@ end
     M = M1 + M2;
 
     f = [F1.',F2.'];
+    a = [a1,a2];
 end

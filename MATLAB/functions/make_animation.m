@@ -1,4 +1,4 @@
-function make_animation(th, r1, r2, xlims, ylims, zlims, filename, scale_factor, pre_rot_dcm, offset, fth)
+function make_animation(th, r1, r2, xlims, ylims, zlims, filename, scale_factor, pre_rot_dcm, offset, fth, cullrate, fixed_view)
 %MAKE_ANIMATION Animates an STL model using position and quaternion state history.
 %
 % th is an Nx13 matrix where:
@@ -6,6 +6,8 @@ function make_animation(th, r1, r2, xlims, ylims, zlims, filename, scale_factor,
 %   Columns 7-10 = [qx, qy, qz, qw] quaternion
 %
 % filename = STL file path
+% fixed_view = true to lock the camera to the vehicle's origin
+% cullrate = how frequently frames are processed (for performance)
 
     % 1) Load STL model
     [F, V] = stlread(filename);
@@ -17,16 +19,13 @@ function make_animation(th, r1, r2, xlims, ylims, zlims, filename, scale_factor,
     end
 
     % 2) Figure Setup
-    figure('Color', 'white', 'Position', [100, 100, 800, 600]);
+    fig = figure('Color', 'white', 'Position', [100, 100, 800, 600]);
     hold on; grid on; axis equal;
     
-    % Set fixed axis limits
-    xlim(xlims); ylim(ylims); zlim(zlims);
-    axis manual; % Prevent MATLAB from auto-scaling
-    
-    xlabel('X'); ylabel('Y'); zlabel('Z');
-    view([-135 35]);
-    
+    % Default view settings
+    default_view = [-135 35];  % Standard perspective view
+    view(default_view);
+
     % 3) Patch for STL
     patch_handle = patch('Faces', F, 'Vertices', V, ...
         'FaceColor', [0.8 0.8 1.0], 'EdgeColor', 'none', ...
@@ -52,8 +51,11 @@ function make_animation(th, r1, r2, xlims, ylims, zlims, filename, scale_factor,
     vid.FrameRate = 30;
     open(vid);
 
+    % Define a bounding box size for tracking the vehicle in view
+    bound_size = max([diff(xlims), diff(ylims), diff(zlims)]) / 2;  % Maintain consistent frame size
+
     % 5) Animation Loop
-    for k = 1:size(th,1)
+    for k = 1:cullrate:size(th,1)
         % Extract position
         pos = th(k, 1:3); % [x, y, z]
 
@@ -102,8 +104,15 @@ function make_animation(th, r1, r2, xlims, ylims, zlims, filename, scale_factor,
         % Update STL
         set(patch_handle, 'Vertices', V_transformed);
 
-        % Keep axis limits constant (forces MATLAB to NOT rescale)
-        xlim(xlims); ylim(ylims); zlim(zlims);
+        % **New: Adjust Camera View and Axis Limits if `fixed_view` is Enabled**
+        if fixed_view
+            camtarget(pos);  % Keep camera looking at the vehicle's origin
+            
+            % Dynamically update the axis limits around the vehicle
+            xlim([pos(1) - bound_size, pos(1) + bound_size]);
+            ylim([pos(2) - bound_size, pos(2) + bound_size]);
+            zlim([pos(3) - bound_size, pos(3) + bound_size]);
+        end
 
         % Capture frame
         frame = getframe(gcf);

@@ -1,4 +1,4 @@
-function dstate = rb_dynamics(state, mass, I, F, tau)
+function dstate = rb_dynamics(state, mass, I, F, tau, opt)
 %GENERIC_RB_DYNAMICS_MODEL Computes the time derivative of state for a generic 6-DOF rigid body.
 
 arguments
@@ -7,6 +7,7 @@ arguments
     I (3,3) double % inertia matrix. Assumed to have no cross terms.
     F (3,1) double % Force vector (N)
     tau (3,1) double % Moment vector (Nm)
+    opt.gravity (1,1) = 0; % Turn on gravity?
 end
 
 % --- Unpack states ---
@@ -30,6 +31,11 @@ dz = vz;
 % Assume F is already expressed in inertial coordinates:
 dvx = F(1) / mass;
 dvy = F(2) / mass;
+
+if(opt.gravity)
+    F(3) = F(3) - mass * 9.81;
+end
+
 dvz = F(3) / mass;
 
 % Standard quaternion derivative formula (e4 = scalar part)
