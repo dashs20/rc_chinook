@@ -1,15 +1,12 @@
 function dstate = rb_dynamics(state, mass, I, F, tau)
 %GENERIC_RB_DYNAMICS_MODEL Computes the time derivative of state for a generic 6-DOF rigid body.
-%
-%   state = [ x; y; z; vx; vy; vz; e1; e2; e3; e4; wx; wy; wz ]
-%       (e1,e2,e3) = quaternion vector part (x,y,z)
-%       e4         = quaternion scalar part (w)
-%   mass = scalar mass of the rigid body
-%   I    = 3x3 inertia matrix
-%   F    = 3x1 net force (in inertial frame, unless you rotate it!)
-%   tau  = 3x1 net torque (in body frame)
-%
-%   dstate = [ dx; dy; dz; dvx; dvy; dvz; de1; de2; de3; de4; dwx; dwy; dwz ]
+
+arguments
+    state (13,1) double % current state.
+    mass (1,1) double % mass (kg)
+    I (3,3) double % inertia matrix. Assumed to have no cross terms.
+    F ()
+end
 
 % --- Unpack states ---
 x   = state(1);
