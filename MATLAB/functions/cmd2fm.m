@@ -1,32 +1,29 @@
-function [F, M, f] = cmd2fm(a1, a2, f1, f2, r1, r2)
-%CMD2FM Converts thruster commands (angles & forces) into net force & moment in the body frame.
-%
-%   Inputs:
-%       a1, a2 - Angles of thrusters [degrees], rotation about body-fixed X-axis
-%       f1, f2 - Scalar thrust magnitudes
-%       r1, r2 - [3x1] position vectors of thruster mount points in body frame
-%
-%   Outputs:
-%       F      - [3x1] net force in body frame
-%       M      - [3x1] net moment about the body origin (usually the CG)
+function [F, M, f] = cmd2fm(a1, a2, f1, f2, r1, r2, max_tilt, max_thrust)
+% this function maps commands into forces and moments.
+arguments
+    a1 (1,1) double % angle (percent) for servo 1.
+    a2 (1,1) double % angle (percent) for servo 2.
+    f1 (1,1) double % force (percent) for motor 1.
+    f2 (1,1) double % force (percent) for motor 2.
+    r1 (1,1) double % location of the 1st motor/servo (m)
+    r2 (1,1) double % location of the 2nd motor/servo (m)
+    max_tilt (1,1) double % maximum tilt (degrees) the servos can achieve.
+    max_thrust (1,1) double % maximum thrust (newtons) the motors can create.
+end
 
-    %----------------------------------------------------
-    % 1. Compute direction unit vectors for each thruster
-    %    Assuming a rotation around the X-axis by angle a,
-    %    and that zero angle means pointing along +Z.
-    %
-    %    R_x(a) * [0; 0; 1] = [ 0; -sin(a); cos(a) ]
-    %----------------------------------------------------
-    a1 = deg2rad(a1);
-    a2 = deg2rad(a2);
+    % first, convert the angles from percent to radians.
+    a1 = a1/100 * deg2rad(max_tilt);
+    a2 = a2/100 * deg2rad(max_tilt);
 
-
+    % compute unit vectors for the force vectors (body coords)
     d1 = [ 0; -sin(a1); cos(a1) ];
     d2 = [ 0; -sin(a2); cos(a2) ];
     
-    %----------------------------------------------------
-    % 2. Compute individual thruster forces in body coords
-    %----------------------------------------------------
+    % second, convert the forces from percent to actual force.
+    f1 = f1/100 * max_thrust;
+    f2 = f2/100 * max_thrust;
+
+    % multiply the forces by their unit vectors (in body coords)
     F1 = f1 * d1;
     F2 = f2 * d2;
     
