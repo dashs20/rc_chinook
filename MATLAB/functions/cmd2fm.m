@@ -5,8 +5,8 @@ arguments
     a2 (1,1) double % angle (percent) for servo 2.
     f1 (1,1) double % force (percent) for motor 1.
     f2 (1,1) double % force (percent) for motor 2.
-    r1 (1,1) double % location of the 1st motor/servo (m)
-    r2 (1,1) double % location of the 2nd motor/servo (m)
+    r1 (1,3) double % location of the 1st motor/servo (m)
+    r2 (1,3) double % location of the 2nd motor/servo (m)
     max_tilt (1,1) double % maximum tilt (degrees) the servos can achieve.
     max_thrust (1,1) double % maximum thrust (newtons) the motors can create.
 end

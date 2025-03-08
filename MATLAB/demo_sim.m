@@ -18,7 +18,7 @@ w0 = [0;0;0];
 I0 = vertcat(r0,v0,q0,w0);
 
 % generate preliminary forces/moments for demo
-[F,M,f] = cmd2fm(70,-90,0.2,0.2,r1,r2);
+[F,M,f] = cmd2fm(30,-30,10,10,r1,r2,30,500/1000*9.81);
 
 % run a 10 second simulation
 tmax = 3;
